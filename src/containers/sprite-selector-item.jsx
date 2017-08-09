@@ -1,28 +1,43 @@
-const bindAll = require('lodash.bindall');
-const React = require('react');
+import bindAll from 'lodash.bindall';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-const SpriteSelectorItemComponent = require('../components/sprite-selector-item/sprite-selector-item.jsx');
+import {connect} from 'react-redux';
+
+import SpriteSelectorItemComponent from '../components/sprite-selector-item/sprite-selector-item.jsx';
 
 class SpriteSelectorItem extends React.Component {
     constructor (props) {
         super(props);
         bindAll(this, [
-            'handleClick'
+            'handleClick',
+            'handleDelete'
         ]);
     }
     handleClick (e) {
         e.preventDefault();
         this.props.onClick(this.props.id);
     }
+    handleDelete () {
+        // eslint-disable-next-line no-alert
+        if (window.confirm('Are you sure you want to delete this sprite?')) {
+            this.props.onDeleteButtonClick(this.props.id);
+        }
+    }
     render () {
         const {
-            id, // eslint-disable-line no-unused-vars
-            onClick, // eslint-disable-line no-unused-vars
+            /* eslint-disable no-unused-vars */
+            assetId,
+            id,
+            onClick,
+            onDeleteButtonClick,
+            /* eslint-enable no-unused-vars */
             ...props
         } = this.props;
         return (
             <SpriteSelectorItemComponent
                 onClick={this.handleClick}
+                onDeleteButtonClick={this.handleDelete}
                 {...props}
             />
         );
@@ -30,11 +45,19 @@ class SpriteSelectorItem extends React.Component {
 }
 
 SpriteSelectorItem.propTypes = {
-    costumeURL: React.PropTypes.string,
-    id: React.PropTypes.string,
-    name: React.PropTypes.string,
-    onClick: React.PropTypes.func,
-    selected: React.PropTypes.bool
+    assetId: PropTypes.string,
+    costumeURL: PropTypes.string,
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    name: PropTypes.string,
+    onClick: PropTypes.func,
+    onDeleteButtonClick: PropTypes.func,
+    selected: PropTypes.bool
 };
 
-module.exports = SpriteSelectorItem;
+const mapStateToProps = (state, {assetId, costumeURL}) => ({
+    costumeURL: costumeURL || (assetId && state.vm.runtime.storage.get(assetId).encodeDataURI())
+});
+
+export default connect(
+    mapStateToProps
+)(SpriteSelectorItem);

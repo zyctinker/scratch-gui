@@ -3,12 +3,16 @@ const CLOSE_MODAL = 'scratch-gui/modals/CLOSE_MODAL';
 
 const MODAL_BACKDROP_LIBRARY = 'backdropLibrary';
 const MODAL_COSTUME_LIBRARY = 'costumeLibrary';
+const MODAL_SOUND_LIBRARY = 'soundLibrary';
 const MODAL_SPRITE_LIBRARY = 'spriteLibrary';
+const MODAL_SOUND_RECORDER = 'soundRecorder';
 
 const initialState = {
     [MODAL_BACKDROP_LIBRARY]: false,
     [MODAL_COSTUME_LIBRARY]: false,
-    [MODAL_SPRITE_LIBRARY]: false
+    [MODAL_SOUND_LIBRARY]: false,
+    [MODAL_SPRITE_LIBRARY]: false,
+    [MODAL_SOUND_RECORDER]: false
 };
 
 const reducer = function (state, action) {
@@ -26,34 +30,58 @@ const reducer = function (state, action) {
         return state;
     }
 };
-reducer.openModal = function (modal) {
+const openModal = function (modal) {
     return {
         type: OPEN_MODAL,
         modal: modal
     };
 };
-reducer.closeModal = function (modal) {
+const closeModal = function (modal) {
     return {
         type: CLOSE_MODAL,
         modal: modal
     };
 };
-reducer.openBackdropLibrary = function () {
-    return reducer.openModal(MODAL_BACKDROP_LIBRARY);
+const openBackdropLibrary = function () {
+    return openModal(MODAL_BACKDROP_LIBRARY);
 };
-reducer.openCostumeLibrary = function () {
-    return reducer.openModal(MODAL_COSTUME_LIBRARY);
+const openCostumeLibrary = function () {
+    return openModal(MODAL_COSTUME_LIBRARY);
 };
-reducer.openSpriteLibrary = function () {
-    return reducer.openModal(MODAL_SPRITE_LIBRARY);
+const openSoundLibrary = function () {
+    return openModal(MODAL_SOUND_LIBRARY);
 };
-reducer.closeBackdropLibrary = function () {
-    return reducer.closeModal(MODAL_BACKDROP_LIBRARY);
+const openSpriteLibrary = function () {
+    return openModal(MODAL_SPRITE_LIBRARY);
 };
-reducer.closeCostumeLibrary = function () {
-    return reducer.closeModal(MODAL_COSTUME_LIBRARY);
+const openSoundRecorder = function () {
+    return openModal(MODAL_SOUND_RECORDER);
 };
-reducer.closeSpriteLibrary = function () {
-    return reducer.closeModal(MODAL_SPRITE_LIBRARY);
+const closeBackdropLibrary = function () {
+    return closeModal(MODAL_BACKDROP_LIBRARY);
 };
-module.exports = reducer;
+const closeCostumeLibrary = function () {
+    return closeModal(MODAL_COSTUME_LIBRARY);
+};
+const closeSpriteLibrary = function () {
+    return closeModal(MODAL_SPRITE_LIBRARY);
+};
+const closeSoundLibrary = function () {
+    return closeModal(MODAL_SOUND_LIBRARY);
+};
+const closeSoundRecorder = function () {
+    return closeModal(MODAL_SOUND_RECORDER);
+};
+export {
+    reducer as default,
+    openBackdropLibrary,
+    openCostumeLibrary,
+    openSoundLibrary,
+    openSpriteLibrary,
+    openSoundRecorder,
+    closeBackdropLibrary,
+    closeCostumeLibrary,
+    closeSpriteLibrary,
+    closeSoundLibrary,
+    closeSoundRecorder
+};

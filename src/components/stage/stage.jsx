@@ -1,7 +1,9 @@
-const React = require('react');
+import PropTypes from 'prop-types';
+import React from 'react';
 
-const Box = require('../box/box.jsx');
-const styles = require('./stage.css');
+import Box from '../box/box.jsx';
+import MonitorList from '../../containers/monitor-list.jsx';
+import styles from './stage.css';
 
 const StageComponent = props => {
     const {
@@ -11,24 +13,29 @@ const StageComponent = props => {
         ...boxProps
     } = props;
     return (
-        <Box
-            className={styles.stage}
-            componentRef={canvasRef}
-            element="canvas"
-            height={height}
-            width={width}
-            {...boxProps}
-        />
+        <Box className={styles.stageWrapper}>
+            <Box
+                className={styles.stage}
+                componentRef={canvasRef}
+                element="canvas"
+                height={height}
+                width={width}
+                {...boxProps}
+            />
+            <Box className={styles.monitorWrapper}>
+                <MonitorList />
+            </Box>
+        </Box>
     );
 };
 StageComponent.propTypes = {
-    canvasRef: React.PropTypes.func,
-    height: React.PropTypes.number,
-    width: React.PropTypes.number
+    canvasRef: PropTypes.func,
+    height: PropTypes.number,
+    width: PropTypes.number
 };
 StageComponent.defaultProps = {
     canvasRef: () => {},
     width: 480,
     height: 360
 };
-module.exports = StageComponent;
+export default StageComponent;

@@ -1,7 +1,8 @@
-const classNames = require('classnames');
-const React = require('react');
-const stylePropType = require('react-style-proptype');
-const styles = require('./box.css');
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
+import stylePropType from 'react-style-proptype';
+import styles from './box.css';
 
 const getRandomColor = (function () {
     // In "DEBUG" mode this is used to output a random background color for each
@@ -74,41 +75,60 @@ const Box = props => {
     }, children);
 };
 Box.propTypes = {
-    alignContent: React.PropTypes.oneOf([
+    /** Defines how the browser distributes space between and around content items vertically within this box. */
+    alignContent: PropTypes.oneOf([
         'flex-start', 'flex-end', 'center', 'space-between', 'space-around', 'stretch'
     ]),
-    alignItems: React.PropTypes.oneOf([
+    /** Defines how the browser distributes space between and around flex items horizontally within this box. */
+    alignItems: PropTypes.oneOf([
         'flex-start', 'flex-end', 'center', 'baseline', 'stretch'
     ]),
-    alignSelf: React.PropTypes.oneOf([
+    /** Specifies how this box should be aligned inside of its container (requires the container to be flexable). */
+    alignSelf: PropTypes.oneOf([
         'auto', 'flex-start', 'flex-end', 'center', 'baseline', 'stretch'
     ]),
-    basis: React.PropTypes.oneOfType([
-        React.PropTypes.number,
-        React.PropTypes.oneOf(['auto'])
+    /** Specifies the initial length of this box */
+    basis: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.oneOf(['auto'])
     ]),
-    children: React.PropTypes.node,
-    className: React.PropTypes.string,
-    componentRef: React.PropTypes.func,
-    direction: React.PropTypes.oneOf([
+    /** Specifies the the HTML nodes which will be child elements of this box. */
+    children: PropTypes.node,
+    /** Specifies the class name that will be set on this box */
+    className: PropTypes.string,
+    /**
+     * A callback function whose first parameter is the underlying dom elements.
+     * This call back will be executed immediately after the component is mounted or unmounted
+     */
+    componentRef: PropTypes.func,
+    /** https://developer.mozilla.org/en-US/docs/Web/CSS/flex-direction */
+    direction: PropTypes.oneOf([
         'row', 'row-reverse', 'column', 'column-reverse'
     ]),
-    element: React.PropTypes.string,
-    grow: React.PropTypes.number,
-    height: React.PropTypes.oneOfType([
-        React.PropTypes.number,
-        React.PropTypes.string
+    /** Specifies the type of HTML element of this box. Defaults to div. */
+    element: PropTypes.string,
+    /** Specifies the flex grow factor of a flex item. */
+    grow: PropTypes.number,
+    /** The height in pixels (if specified as a number) or a string if different units are required. */
+    height: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string
     ]),
-    justifyContent: React.PropTypes.oneOf([
+    /** https://developer.mozilla.org/en-US/docs/Web/CSS/justify-content */
+    justifyContent: PropTypes.oneOf([
         'flex-start', 'flex-end', 'center', 'space-between', 'space-around'
     ]),
-    shrink: React.PropTypes.number,
+    /** Specifies the flex shrink factor of a flex item. */
+    shrink: PropTypes.number,
+    /** An object whose keys are css property names and whose values correspond the the css property. */
     style: stylePropType,
-    width: React.PropTypes.oneOfType([
-        React.PropTypes.number,
-        React.PropTypes.string
+    /** The width in pixels (if specified as a number) or a string if different units are required. */
+    width: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string
     ]),
-    wrap: React.PropTypes.oneOf([
+    /** How whitespace should wrap within this block. */
+    wrap: PropTypes.oneOf([
         'nowrap', 'wrap', 'wrap-reverse'
     ])
 };
@@ -116,4 +136,4 @@ Box.defaultProps = {
     element: 'div',
     style: {}
 };
-module.exports = Box;
+export default Box;

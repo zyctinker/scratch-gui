@@ -1,10 +1,12 @@
-const bindAll = require('lodash.bindall');
-const React = require('react');
-const VM = require('scratch-vm');
+import bindAll from 'lodash.bindall';
+import PropTypes from 'prop-types';
+import React from 'react';
+import VM from 'scratch-vm';
 
-const {connect} = require('react-redux');
+import {connect} from 'react-redux';
 
-const targets = require('../reducers/targets');
+import {updateEditingTarget, updateTargets} from '../reducers/targets';
+import {updateMonitors} from '../reducers/monitors';
 
 /*
  * Higher Order Component to manage events emitted by the VM
@@ -26,7 +28,8 @@ const vmListenerHOC = function (WrappedComponent) {
             // If the wrapped component uses the vm in componentDidMount, then
             // we need to start listening before mounting the wrapped component.
             this.props.vm.on('targetsUpdate', this.props.onTargetsUpdate);
-            this.props.vm.on('SPRITE_INFO_REPORT', this.props.onSpriteInfoReport);
+            this.props.vm.on('MONITORS_UPDATE', this.props.onMonitorsUpdate);
+
         }
         componentDidMount () {
             if (this.props.attachKeyboardEvents) {
@@ -73,7 +76,7 @@ const vmListenerHOC = function (WrappedComponent) {
                 attachKeyboardEvents,
                 onKeyDown,
                 onKeyUp,
-                onSpriteInfoReport,
+                onMonitorsUpdate,
                 onTargetsUpdate,
                 /* eslint-enable no-unused-vars */
                 ...props
@@ -82,25 +85,26 @@ const vmListenerHOC = function (WrappedComponent) {
         }
     }
     VMListener.propTypes = {
-        attachKeyboardEvents: React.PropTypes.bool,
-        onKeyDown: React.PropTypes.func,
-        onKeyUp: React.PropTypes.func,
-        onSpriteInfoReport: React.PropTypes.func,
-        onTargetsUpdate: React.PropTypes.func,
-        vm: React.PropTypes.instanceOf(VM).isRequired
+        attachKeyboardEvents: PropTypes.bool,
+        onKeyDown: PropTypes.func,
+        onKeyUp: PropTypes.func,
+        onMonitorsUpdate: PropTypes.func,
+        onTargetsUpdate: PropTypes.func,
+        vm: PropTypes.instanceOf(VM).isRequired
     };
     VMListener.defaultProps = {
-        attachKeyboardEvents: true,
-        vm: new VM()
+        attachKeyboardEvents: true
     };
-    const mapStateToProps = () => ({});
+    const mapStateToProps = state => ({
+        vm: state.vm
+    });
     const mapDispatchToProps = dispatch => ({
         onTargetsUpdate: data => {
-            dispatch(targets.updateEditingTarget(data.editingTarget));
-            dispatch(targets.updateTargets(data.targetList));
+            dispatch(updateEditingTarget(data.editingTarget));
+            dispatch(updateTargets(data.targetList));
         },
-        onSpriteInfoReport: spriteInfo => {
-            dispatch(targets.updateTarget(spriteInfo));
+        onMonitorsUpdate: monitorList => {
+            dispatch(updateMonitors(monitorList));
         }
     });
     return connect(
@@ -109,4 +113,4 @@ const vmListenerHOC = function (WrappedComponent) {
     )(VMListener);
 };
 
-module.exports = vmListenerHOC;
+export default vmListenerHOC;

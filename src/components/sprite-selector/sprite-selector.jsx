@@ -1,18 +1,20 @@
-const React = require('react');
+import PropTypes from 'prop-types';
+import React from 'react';
 
-const Box = require('../box/box.jsx');
-const SpriteInfo = require('../../containers/sprite-info.jsx');
-const SpriteSelectorItem = require('../../containers/sprite-selector-item.jsx');
-const styles = require('./sprite-selector.css');
+import Box from '../box/box.jsx';
+import SpriteInfo from '../../containers/sprite-info.jsx';
+import SpriteSelectorItem from '../../containers/sprite-selector-item.jsx';
+import styles from './sprite-selector.css';
 
 const SpriteSelectorComponent = function (props) {
     const {
-        onChangeSpriteDraggability,
+        onChangeSpriteDirection,
         onChangeSpriteName,
         onChangeSpriteRotationStyle,
         onChangeSpriteVisibility,
         onChangeSpriteX,
         onChangeSpriteY,
+        onDeleteSprite,
         onSelectSprite,
         selectedId,
         sprites,
@@ -29,15 +31,16 @@ const SpriteSelectorComponent = function (props) {
             className={styles.spriteSelector}
             {...componentProps}
         >
+
             <SpriteInfo
+                direction={selectedSprite.direction}
                 disabled={spriteInfoDisabled}
-                draggable={selectedSprite.draggable}
                 name={selectedSprite.name}
                 rotationStyle={selectedSprite.rotationStyle}
                 visible={selectedSprite.visible}
                 x={selectedSprite.x}
                 y={selectedSprite.y}
-                onChangeDraggability={onChangeSpriteDraggability}
+                onChangeDirection={onChangeSpriteDirection}
                 onChangeName={onChangeSpriteName}
                 onChangeRotationStyle={onChangeSpriteRotationStyle}
                 onChangeVisibility={onChangeSpriteVisibility}
@@ -50,15 +53,17 @@ const SpriteSelectorComponent = function (props) {
                     {Object.keys(sprites)
                         // Re-order by list order
                         .sort((id1, id2) => sprites[id1].order - sprites[id2].order)
-                        .map(id => (
+                        .map(id => sprites[id])
+                        .map(sprite => (
                             <SpriteSelectorItem
+                                assetId={sprite.costume && sprite.costume.assetId}
                                 className={styles.sprite}
-                                costumeURL={sprites[id].costume.skin}
-                                id={id}
-                                key={id}
-                                name={sprites[id].name}
-                                selected={id === selectedId}
+                                id={sprite.id}
+                                key={sprite.id}
+                                name={sprite.name}
+                                selected={sprite.id === selectedId}
                                 onClick={onSelectSprite}
+                                onDeleteButtonClick={onDeleteSprite}
                             />
                         ))
                     }
@@ -69,27 +74,28 @@ const SpriteSelectorComponent = function (props) {
 };
 
 SpriteSelectorComponent.propTypes = {
-    onChangeSpriteDraggability: React.PropTypes.func,
-    onChangeSpriteName: React.PropTypes.func,
-    onChangeSpriteRotationStyle: React.PropTypes.func,
-    onChangeSpriteVisibility: React.PropTypes.func,
-    onChangeSpriteX: React.PropTypes.func,
-    onChangeSpriteY: React.PropTypes.func,
-    onSelectSprite: React.PropTypes.func,
-    selectedId: React.PropTypes.string,
-    sprites: React.PropTypes.shape({
-        id: React.PropTypes.shape({
-            costume: React.PropTypes.shape({
-                skin: React.PropTypes.string,
-                name: React.PropTypes.string,
-                bitmapResolution: React.PropTypes.number,
-                rotationCenterX: React.PropTypes.number,
-                rotationCenterY: React.PropTypes.number
+    onChangeSpriteDirection: PropTypes.func,
+    onChangeSpriteName: PropTypes.func,
+    onChangeSpriteRotationStyle: PropTypes.func,
+    onChangeSpriteVisibility: PropTypes.func,
+    onChangeSpriteX: PropTypes.func,
+    onChangeSpriteY: PropTypes.func,
+    onDeleteSprite: PropTypes.func,
+    onSelectSprite: PropTypes.func,
+    selectedId: PropTypes.string,
+    sprites: PropTypes.shape({
+        id: PropTypes.shape({
+            costume: PropTypes.shape({
+                url: PropTypes.string,
+                name: PropTypes.string.isRequired,
+                bitmapResolution: PropTypes.number.isRequired,
+                rotationCenterX: PropTypes.number.isRequired,
+                rotationCenterY: PropTypes.number.isRequired
             }),
-            name: React.PropTypes.string,
-            order: React.PropTypes.number
+            name: PropTypes.string.isRequired,
+            order: PropTypes.number.isRequired
         })
     })
 };
 
-module.exports = SpriteSelectorComponent;
+export default SpriteSelectorComponent;

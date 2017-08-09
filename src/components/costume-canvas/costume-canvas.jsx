@@ -1,6 +1,7 @@
-const React = require('react');
-const svgToImage = require('svg-to-image');
-const xhr = require('xhr');
+import PropTypes from 'prop-types';
+import React from 'react';
+import svgToImage from 'svg-to-image';
+import xhr from 'xhr';
 
 /**
  * @fileoverview
@@ -119,11 +120,11 @@ CostumeCanvas.defaultProps = {
 };
 
 CostumeCanvas.propTypes = {
-    className: React.PropTypes.string,
-    direction: React.PropTypes.number,
-    height: React.PropTypes.number,
-    url: React.PropTypes.string,
-    width: React.PropTypes.number
+    className: PropTypes.string,
+    direction: PropTypes.number,
+    height: PropTypes.number,
+    url: PropTypes.string.isRequired,
+    width: PropTypes.number
 };
 
-module.exports = CostumeCanvas;
+export default CostumeCanvas;

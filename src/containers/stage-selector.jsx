@@ -1,7 +1,10 @@
-const bindAll = require('lodash.bindall');
-const React = require('react');
+import bindAll from 'lodash.bindall';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-const StageSelectorComponent = require('../components/stage-selector/stage-selector.jsx');
+import {connect} from 'react-redux';
+
+import StageSelectorComponent from '../components/stage-selector/stage-selector.jsx';
 
 class StageSelector extends React.Component {
     constructor (props) {
@@ -17,6 +20,7 @@ class StageSelector extends React.Component {
     render () {
         const {
             /* eslint-disable no-unused-vars */
+            assetId,
             id,
             onSelect,
             /* eslint-enable no-unused-vars */
@@ -32,7 +36,15 @@ class StageSelector extends React.Component {
 }
 StageSelector.propTypes = {
     ...StageSelectorComponent.propTypes,
-    id: React.PropTypes.string,
-    onSelect: React.PropTypes.func
+    id: PropTypes.string,
+    onSelect: PropTypes.func
 };
-module.exports = StageSelector;
+
+const mapStateToProps = (state, {assetId}) => ({
+    url: assetId && state.vm.runtime.storage.get(assetId).encodeDataURI()
+});
+
+export default connect(
+    mapStateToProps,
+    () => ({}) // omit dispatch prop
+)(StageSelector);

@@ -1,19 +1,38 @@
-const isEqual = require('lodash.isequal');
-const omit = require('lodash.omit');
-const classNames = require('classnames');
-const React = require('react');
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
+import {FormattedMessage} from 'react-intl';
 
-const VM = require('scratch-vm');
+import VM from 'scratch-vm';
 
-const Box = require('../box/box.jsx');
-const BackdropLibrary = require('../../containers/backdrop-library.jsx');
-const CostumeLibrary = require('../../containers/costume-library.jsx');
-const SpriteLibrary = require('../../containers/sprite-library.jsx');
-const SpriteSelectorComponent = require('../sprite-selector/sprite-selector.jsx');
-const StageSelector = require('../../containers/stage-selector.jsx');
+import Box from '../box/box.jsx';
+import BackdropLibrary from '../../containers/backdrop-library.jsx';
+import CostumeLibrary from '../../containers/costume-library.jsx';
+import SoundLibrary from '../../containers/sound-library.jsx';
+import SpriteLibrary from '../../containers/sprite-library.jsx';
+import SpriteSelectorComponent from '../sprite-selector/sprite-selector.jsx';
+import StageSelector from '../../containers/stage-selector.jsx';
+import IconButton from '../icon-button/icon-button.jsx';
 
-const styles = require('./target-pane.css');
-const addIcon = require('./icon--add.svg');
+import styles from './target-pane.css';
+import spriteIcon from './icon--sprite.svg';
+import backdropIcon from './icon--backdrop.svg';
+
+const addSpriteMessage = (
+    <FormattedMessage
+        defaultMessage="Add Sprite"
+        description="Button to add a sprite in the target pane"
+        id="targetPane.addSprite"
+    />
+);
+
+const addBackdropMessage = (
+    <FormattedMessage
+        defaultMessage="Add Backdrop"
+        description="Button to add a backdrop in the target pane"
+        id="targetPane.addBackdrop"
+    />
+);
 
 /*
  * Pane that contains the sprite selector, sprite info, stage selector,
@@ -21,145 +40,142 @@ const addIcon = require('./icon--add.svg');
  * @param {object} props Props for the component
  * @returns {React.Component} rendered component
  */
-class TargetPane extends React.Component {
-    shouldComponentUpdate (nextProps) {
-        return (
-            // Do a normal shallow compare on all props except sprites
-            Object.keys(omit(nextProps, ['sprites']))
-                .reduce((all, k) => all || nextProps[k] !== this.props[k], false) ||
-            // Deep compare on sprites object
-            !isEqual(this.props.sprites, nextProps.sprites)
-        );
-    }
-    render () {
-        const {
-            editingTarget,
-            backdropLibraryVisible,
-            costumeLibraryVisible,
-            spriteLibraryVisible,
-            onChangeSpriteDraggability,
-            onChangeSpriteName,
-            onChangeSpriteRotationStyle,
-            onChangeSpriteVisibility,
-            onChangeSpriteX,
-            onChangeSpriteY,
-            onNewSpriteClick,
-            onNewBackdropClick,
-            onRequestCloseBackdropLibrary,
-            onRequestCloseCostumeLibrary,
-            onRequestCloseSpriteLibrary,
-            onSelectSprite,
-            stage,
-            sprites,
-            vm,
-            ...componentProps
-        } = this.props;
-        return (
-            <Box
-                className={styles.targetPane}
-                {...componentProps}
-            >
+const TargetPane = ({
+    editingTarget,
+    backdropLibraryVisible,
+    costumeLibraryVisible,
+    soundLibraryVisible,
+    spriteLibraryVisible,
+    onChangeSpriteDirection,
+    onChangeSpriteName,
+    onChangeSpriteRotationStyle,
+    onChangeSpriteVisibility,
+    onChangeSpriteX,
+    onChangeSpriteY,
+    onDeleteSprite,
+    onNewSpriteClick,
+    onNewBackdropClick,
+    onRequestCloseBackdropLibrary,
+    onRequestCloseCostumeLibrary,
+    onRequestCloseSoundLibrary,
+    onRequestCloseSpriteLibrary,
+    onSelectSprite,
+    stage,
+    sprites,
+    vm,
+    ...componentProps
+}) => (
+    <Box
+        className={styles.targetPane}
+        {...componentProps}
+    >
 
-                <SpriteSelectorComponent
-                    selectedId={editingTarget}
-                    sprites={sprites}
-                    onChangeSpriteDraggability={onChangeSpriteDraggability}
-                    onChangeSpriteName={onChangeSpriteName}
-                    onChangeSpriteRotationStyle={onChangeSpriteRotationStyle}
-                    onChangeSpriteVisibility={onChangeSpriteVisibility}
-                    onChangeSpriteX={onChangeSpriteX}
-                    onChangeSpriteY={onChangeSpriteY}
-                    onSelectSprite={onSelectSprite}
-                />
-                <Box className={styles.stageSelectorWrapper}>
-                    {stage.id && <StageSelector
-                        backdropCount={stage.costumeCount}
-                        id={stage.id}
-                        selected={stage.id === editingTarget}
-                        url={stage.costume.skin}
-                        onSelect={onSelectSprite}
-                    />}
-                    <Box>
-
-                        <button
-                            className={classNames(styles.addButtonWrapper, styles.addButtonWrapperSprite)}
-                            onClick={onNewSpriteClick}
-                        >
-                            <img
-                                className={styles.addButton}
-                                src={addIcon}
-                            />
-                        </button>
-
-                        <button
-                            className={classNames(styles.addButtonWrapper, styles.addButtonWrapperStage)}
-                            onClick={onNewBackdropClick}
-                        >
-                            <img
-                                className={styles.addButton}
-                                src={addIcon}
-                            />
-                        </button>
-
-                        <SpriteLibrary
-                            visible={spriteLibraryVisible}
-                            vm={vm}
-                            onRequestClose={onRequestCloseSpriteLibrary}
-                        />
-                        <CostumeLibrary
-                            visible={costumeLibraryVisible}
-                            vm={vm}
-                            onRequestClose={onRequestCloseCostumeLibrary}
-                        />
-                        <BackdropLibrary
-                            visible={backdropLibraryVisible}
-                            vm={vm}
-                            onRequestClose={onRequestCloseBackdropLibrary}
-                        />
-                    </Box>
+        <SpriteSelectorComponent
+            selectedId={editingTarget}
+            sprites={sprites}
+            onChangeSpriteDirection={onChangeSpriteDirection}
+            onChangeSpriteName={onChangeSpriteName}
+            onChangeSpriteRotationStyle={onChangeSpriteRotationStyle}
+            onChangeSpriteVisibility={onChangeSpriteVisibility}
+            onChangeSpriteX={onChangeSpriteX}
+            onChangeSpriteY={onChangeSpriteY}
+            onDeleteSprite={onDeleteSprite}
+            onSelectSprite={onSelectSprite}
+        />
+        <Box className={styles.stageSelectorWrapper}>
+            {stage.id && <StageSelector
+                assetId={
+                    stage.costume &&
+                    stage.costume.assetId
+                }
+                backdropCount={stage.costumeCount}
+                id={stage.id}
+                selected={stage.id === editingTarget}
+                onSelect={onSelectSprite}
+            />}
+            <Box>
+                <Box className={classNames(styles.addButtonWrapper, styles.addButtonWrapperSprite)}>
+                    <IconButton
+                        className={styles.addButton}
+                        img={spriteIcon}
+                        title={addSpriteMessage}
+                        onClick={onNewSpriteClick}
+                    />
                 </Box>
+                <Box className={classNames(styles.addButtonWrapper, styles.addButtonWrapperStage)}>
+                    <IconButton
+                        className={styles.addButton}
+                        img={backdropIcon}
+                        title={addBackdropMessage}
+                        onClick={onNewBackdropClick}
+                    />
+                </Box>
+                <SpriteLibrary
+                    visible={spriteLibraryVisible}
+                    vm={vm}
+                    onRequestClose={onRequestCloseSpriteLibrary}
+                />
+                <CostumeLibrary
+                    visible={costumeLibraryVisible}
+                    vm={vm}
+                    onRequestClose={onRequestCloseCostumeLibrary}
+                />
+                <SoundLibrary
+                    visible={soundLibraryVisible}
+                    vm={vm}
+                    onRequestClose={onRequestCloseSoundLibrary}
+                />
+                <BackdropLibrary
+                    visible={backdropLibraryVisible}
+                    vm={vm}
+                    onRequestClose={onRequestCloseBackdropLibrary}
+                />
             </Box>
-        );
-    }
-}
-const spriteShape = React.PropTypes.shape({
-    costume: React.PropTypes.shape({
-        skin: React.PropTypes.string,
-        name: React.PropTypes.string,
-        bitmapResolution: React.PropTypes.number,
-        rotationCenterX: React.PropTypes.number,
-        rotationCenterY: React.PropTypes.number
+        </Box>
+    </Box>
+);
+
+const spriteShape = PropTypes.shape({
+    costume: PropTypes.shape({
+        url: PropTypes.string,
+        name: PropTypes.string.isRequired,
+        bitmapResolution: PropTypes.number.isRequired,
+        rotationCenterX: PropTypes.number.isRequired,
+        rotationCenterY: PropTypes.number.isRequired
     }),
-    draggable: React.PropTypes.bool,
-    id: React.PropTypes.string,
-    name: React.PropTypes.string,
-    order: React.PropTypes.number,
-    rotationStyle: React.PropTypes.string,
-    visibility: React.PropTypes.bool,
-    x: React.PropTypes.number,
-    y: React.PropTypes.number
+    direction: PropTypes.number,
+    id: PropTypes.string,
+    name: PropTypes.string,
+    order: PropTypes.number,
+    rotationStyle: PropTypes.string,
+    visibility: PropTypes.bool,
+    x: PropTypes.number,
+    y: PropTypes.number
 });
 
 TargetPane.propTypes = {
-    backdropLibraryVisible: React.PropTypes.bool,
-    costumeLibraryVisible: React.PropTypes.bool,
-    editingTarget: React.PropTypes.string,
-    onChangeSpriteDraggability: React.PropTypes.func,
-    onChangeSpriteName: React.PropTypes.func,
-    onChangeSpriteRotationStyle: React.PropTypes.func,
-    onChangeSpriteVisibility: React.PropTypes.func,
-    onChangeSpriteX: React.PropTypes.func,
-    onChangeSpriteY: React.PropTypes.func,
-    onNewBackdropClick: React.PropTypes.func,
-    onNewSpriteClick: React.PropTypes.func,
-    onRequestCloseBackdropLibrary: React.PropTypes.func,
-    onRequestCloseCostumeLibrary: React.PropTypes.func,
-    onRequestCloseSpriteLibrary: React.PropTypes.func,
-    onSelectSprite: React.PropTypes.func,
-    spriteLibraryVisible: React.PropTypes.bool,
-    sprites: React.PropTypes.objectOf(spriteShape),
+    backdropLibraryVisible: PropTypes.bool,
+    costumeLibraryVisible: PropTypes.bool,
+    editingTarget: PropTypes.string,
+    onChangeSpriteDirection: PropTypes.func,
+    onChangeSpriteName: PropTypes.func,
+    onChangeSpriteRotationStyle: PropTypes.func,
+    onChangeSpriteVisibility: PropTypes.func,
+    onChangeSpriteX: PropTypes.func,
+    onChangeSpriteY: PropTypes.func,
+    onDeleteSprite: PropTypes.func,
+    onNewBackdropClick: PropTypes.func,
+    onNewSpriteClick: PropTypes.func,
+    onRequestCloseBackdropLibrary: PropTypes.func,
+    onRequestCloseCostumeLibrary: PropTypes.func,
+    onRequestCloseSoundLibrary: PropTypes.func,
+    onRequestCloseSpriteLibrary: PropTypes.func,
+    onSelectSprite: PropTypes.func,
+    soundLibraryVisible: PropTypes.bool,
+    spriteLibraryVisible: PropTypes.bool,
+    sprites: PropTypes.objectOf(spriteShape),
     stage: spriteShape,
-    vm: React.PropTypes.instanceOf(VM)
+    vm: PropTypes.instanceOf(VM)
 };
 
-module.exports = TargetPane;
+export default TargetPane;

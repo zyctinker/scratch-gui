@@ -1,8 +1,9 @@
-const classNames = require('classnames');
-const React = require('react');
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-const stopAllIcon = require('./icon--stop-all.svg');
-const styles = require('./stop-all.css');
+import stopAllIcon from './icon--stop-all.svg';
+import styles from './stop-all.css';
 
 const StopAllComponent = function (props) {
     const {
@@ -26,9 +27,9 @@ const StopAllComponent = function (props) {
 };
 
 StopAllComponent.propTypes = {
-    active: React.PropTypes.bool,
-    onClick: React.PropTypes.func,
-    title: React.PropTypes.string
+    active: PropTypes.bool,
+    onClick: PropTypes.func.isRequired,
+    title: PropTypes.string
 };
 
 StopAllComponent.defaultProps = {
@@ -36,4 +37,4 @@ StopAllComponent.defaultProps = {
     title: 'Stop'
 };
 
-module.exports = StopAllComponent;
+export default StopAllComponent;

@@ -1,33 +1,35 @@
-const bindAll = require('lodash.bindall');
-const React = require('react');
+import bindAll from 'lodash.bindall';
+import React from 'react';
 
-const {connect} = require('react-redux');
+import {connect} from 'react-redux';
 
-const {
+import {
     openBackdropLibrary,
     openSpriteLibrary,
     closeBackdropLibrary,
     closeCostumeLibrary,
+    closeSoundLibrary,
     closeSpriteLibrary
-} = require('../reducers/modals');
+} from '../reducers/modals';
 
-const TargetPaneComponent = require('../components/target-pane/target-pane.jsx');
+import TargetPaneComponent from '../components/target-pane/target-pane.jsx';
 
 class TargetPane extends React.Component {
     constructor (props) {
         super(props);
         bindAll(this, [
-            'handleChangeSpriteDraggability',
+            'handleChangeSpriteDirection',
             'handleChangeSpriteName',
             'handleChangeSpriteRotationStyle',
             'handleChangeSpriteVisibility',
             'handleChangeSpriteX',
             'handleChangeSpriteY',
+            'handleDeleteSprite',
             'handleSelectSprite'
         ]);
     }
-    handleChangeSpriteDraggability (draggable) {
-        this.props.vm.postSpriteInfo({draggable});
+    handleChangeSpriteDirection (direction) {
+        this.props.vm.postSpriteInfo({direction});
     }
     handleChangeSpriteName (name) {
         this.props.vm.renameSprite(this.props.editingTarget, name);
@@ -44,6 +46,9 @@ class TargetPane extends React.Component {
     handleChangeSpriteY (y) {
         this.props.vm.postSpriteInfo({y});
     }
+    handleDeleteSprite (id) {
+        this.props.vm.deleteSprite(id);
+    }
     handleSelectSprite (id) {
         this.props.vm.setEditingTarget(id);
     }
@@ -51,12 +56,13 @@ class TargetPane extends React.Component {
         return (
             <TargetPaneComponent
                 {...this.props}
-                onChangeSpriteDraggability={this.handleChangeSpriteDraggability}
+                onChangeSpriteDirection={this.handleChangeSpriteDirection}
                 onChangeSpriteName={this.handleChangeSpriteName}
                 onChangeSpriteRotationStyle={this.handleChangeSpriteRotationStyle}
                 onChangeSpriteVisibility={this.handleChangeSpriteVisibility}
                 onChangeSpriteX={this.handleChangeSpriteX}
                 onChangeSpriteY={this.handleChangeSpriteY}
+                onDeleteSprite={this.handleDeleteSprite}
                 onSelectSprite={this.handleSelectSprite}
             />
         );
@@ -75,13 +81,15 @@ TargetPane.propTypes = {
 const mapStateToProps = state => ({
     editingTarget: state.targets.editingTarget,
     sprites: Object.keys(state.targets.sprites).reduce((sprites, k) => {
-        let {x, y, ...sprite} = state.targets.sprites[k];
+        let {direction, x, y, ...sprite} = state.targets.sprites[k];
+        if (typeof direction !== 'undefined') direction = Math.round(direction);
         if (typeof x !== 'undefined') x = Math.round(x);
         if (typeof y !== 'undefined') y = Math.round(y);
-        sprites[k] = {...sprite, x, y};
+        sprites[k] = {...sprite, direction, x, y};
         return sprites;
     }, {}),
     stage: state.targets.stage,
+    soundLibraryVisible: state.modals.soundLibrary,
     spriteLibraryVisible: state.modals.spriteLibrary,
     costumeLibraryVisible: state.modals.costumeLibrary,
     backdropLibraryVisible: state.modals.backdropLibrary
@@ -101,12 +109,15 @@ const mapDispatchToProps = dispatch => ({
     onRequestCloseCostumeLibrary: () => {
         dispatch(closeCostumeLibrary());
     },
+    onRequestCloseSoundLibrary: () => {
+        dispatch(closeSoundLibrary());
+    },
     onRequestCloseSpriteLibrary: () => {
         dispatch(closeSpriteLibrary());
     }
 });
 
-module.exports = connect(
+export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(TargetPane);

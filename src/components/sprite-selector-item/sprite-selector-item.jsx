@@ -1,9 +1,11 @@
-const classNames = require('classnames');
-const React = require('react');
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-const Box = require('../box/box.jsx');
-const CostumeCanvas = require('../costume-canvas/costume-canvas.jsx');
-const styles = require('./sprite-selector-item.css');
+import Box from '../box/box.jsx';
+import CostumeCanvas from '../costume-canvas/costume-canvas.jsx';
+import CloseButton from '../close-button/close-button.jsx';
+import styles from './sprite-selector-item.css';
 
 const SpriteSelectorItem = props => (
     <Box
@@ -16,6 +18,13 @@ const SpriteSelectorItem = props => (
         )}
         onClick={props.onClick}
     >
+        {props.selected ? (
+            <CloseButton
+                className={styles.deleteButton}
+                size={CloseButton.SIZE_SMALL}
+                onClick={props.onDeleteButtonClick}
+            />
+        ) : null }
         {props.costumeURL ? (
             <CostumeCanvas
                 className={styles.spriteImage}
@@ -29,11 +38,12 @@ const SpriteSelectorItem = props => (
 );
 
 SpriteSelectorItem.propTypes = {
-    className: React.PropTypes.string,
-    costumeURL: React.PropTypes.string,
-    name: React.PropTypes.string,
-    onClick: React.PropTypes.func,
-    selected: React.PropTypes.bool
+    className: PropTypes.string,
+    costumeURL: PropTypes.string,
+    name: PropTypes.string.isRequired,
+    onClick: PropTypes.func,
+    onDeleteButtonClick: PropTypes.func,
+    selected: PropTypes.bool.isRequired
 };
 
-module.exports = SpriteSelectorItem;
+export default SpriteSelectorItem;

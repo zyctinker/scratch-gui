@@ -1,6 +1,6 @@
-const ScratchBlocks = require('scratch-blocks');
+import ScratchBlocks from 'scratch-blocks';
 
-module.exports = function (vm) {
+export default function (vm) {
 
     const jsonForMenuBlock = function (name, menuOptionsFn, colors, start) {
         return {
@@ -9,7 +9,9 @@ module.exports = function (vm) {
                 {
                     type: 'field_dropdown',
                     name: name,
-                    options: start.concat(menuOptionsFn())
+                    options: function () {
+                        return start.concat(menuOptionsFn());
+                    }
                 }
             ],
             inputsInline: true,
@@ -43,7 +45,7 @@ module.exports = function (vm) {
             if (!vm.runtime.targets.hasOwnProperty(targetId)) continue;
             if (vm.runtime.targets[targetId].isOriginal) {
                 if (!vm.runtime.targets[targetId].isStage) {
-                    if (vm.runtime.targets[targetId].sprite.id === vm.editingTarget.sprite.id) {
+                    if (vm.runtime.targets[targetId] === vm.editingTarget) {
                         continue;
                     }
                     sprites.push([vm.runtime.targets[targetId].sprite.name, vm.runtime.targets[targetId].sprite.name]);
@@ -129,5 +131,10 @@ module.exports = function (vm) {
         this.jsonInit(json);
     };
 
+    ScratchBlocks.VerticalFlyout.getCheckboxState = function (blockId) {
+        const monitoredBlock = vm.runtime.monitorBlocks._blocks[blockId];
+        return monitoredBlock ? monitoredBlock.isMonitored : false;
+    };
+
     return ScratchBlocks;
-};
+}

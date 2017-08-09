@@ -1,12 +1,13 @@
-const bindAll = require('lodash.bindall');
-const React = require('react');
-const VM = require('scratch-vm');
+import bindAll from 'lodash.bindall';
+import PropTypes from 'prop-types';
+import React from 'react';
+import VM from 'scratch-vm';
 
-const costumeLibraryContent = require('../lib/libraries/costumes.json');
-const LibaryComponent = require('../components/library/library.jsx');
+import costumeLibraryContent from '../lib/libraries/costumes.json';
+import LibraryComponent from '../components/library/library.jsx';
 
 
-class CostumeLibrary extends React.Component {
+class CostumeLibrary extends React.PureComponent {
     constructor (props) {
         super(props);
         bindAll(this, [
@@ -15,19 +16,17 @@ class CostumeLibrary extends React.Component {
     }
     handleItemSelected (item) {
         const vmCostume = {
-            skin: `https://cdn.assets.scratch.mit.edu/internalapi/asset/${item.md5}/get/`,
             name: item.name,
             rotationCenterX: item.info[0],
-            rotationCenterY: item.info[1]
+            rotationCenterY: item.info[1],
+            bitmapResolution: item.info.length > 2 ? item.info[2] : 1,
+            skinId: null
         };
-        if (item.info.length > 2) {
-            vmCostume.bitmapResolution = item.info[2];
-        }
-        this.props.vm.addCostume(vmCostume);
+        this.props.vm.addCostume(item.md5, vmCostume);
     }
     render () {
         return (
-            <LibaryComponent
+            <LibraryComponent
                 data={costumeLibraryContent}
                 title="Costume Library"
                 visible={this.props.visible}
@@ -39,9 +38,9 @@ class CostumeLibrary extends React.Component {
 }
 
 CostumeLibrary.propTypes = {
-    onRequestClose: React.PropTypes.func,
-    visible: React.PropTypes.bool,
-    vm: React.PropTypes.instanceOf(VM).isRequired
+    onRequestClose: PropTypes.func,
+    visible: PropTypes.bool,
+    vm: PropTypes.instanceOf(VM).isRequired
 };
 
-module.exports = CostumeLibrary;
+export default CostumeLibrary;

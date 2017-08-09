@@ -16,6 +16,7 @@ module.exports = {
         host: '0.0.0.0',
         port: process.env.PORT || 8601
     },
+    devtool: 'cheap-module-source-map',
     entry: {
         lib: ['react', 'react-dom'],
         gui: './src/index.jsx'
@@ -32,11 +33,7 @@ module.exports = {
         rules: [{
             test: /\.jsx?$/,
             loader: 'babel-loader',
-            include: path.resolve(__dirname, 'src'),
-            options: {
-                plugins: ['transform-object-rest-spread'],
-                presets: [['es2015', {modules: false}], 'react']
-            }
+            include: path.resolve(__dirname, 'src')
         },
         {
             test: /\.css$/,
@@ -74,7 +71,6 @@ module.exports = {
     plugins: [
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': '"' + process.env.NODE_ENV + '"',
-            'process.env.BASE_PATH': '"' + (process.env.BASE_PATH || '/') + '"',
             'process.env.DEBUG': Boolean(process.env.DEBUG)
         }),
         new webpack.optimize.CommonsChunkPlugin({

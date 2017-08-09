@@ -1,8 +1,9 @@
-const classNames = require('classnames');
-const React = require('react');
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-const greenFlagIcon = require('./icon--green-flag.svg');
-const styles = require('./green-flag.css');
+import greenFlagIcon from './icon--green-flag.svg';
+import styles from './green-flag.css';
 
 const GreenFlagComponent = function (props) {
     const {
@@ -25,12 +26,12 @@ const GreenFlagComponent = function (props) {
     );
 };
 GreenFlagComponent.propTypes = {
-    active: React.PropTypes.bool,
-    onClick: React.PropTypes.func,
-    title: React.PropTypes.string
+    active: PropTypes.bool,
+    onClick: PropTypes.func.isRequired,
+    title: PropTypes.string
 };
 GreenFlagComponent.defaultProps = {
     active: false,
     title: 'Go'
 };
-module.exports = GreenFlagComponent;
+export default GreenFlagComponent;

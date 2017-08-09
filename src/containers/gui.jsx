@@ -1,11 +1,20 @@
-const React = require('react');
-const VM = require('scratch-vm');
+import PropTypes from 'prop-types';
+import React from 'react';
+import VM from 'scratch-vm';
+import bindAll from 'lodash.bindall';
 
-const vmListenerHOC = require('../lib/vm-listener-hoc.jsx');
+import vmListenerHOC from '../lib/vm-listener-hoc.jsx';
 
-const GUIComponent = require('../components/gui/gui.jsx');
+import GUIComponent from '../components/gui/gui.jsx';
 
 class GUI extends React.Component {
+    constructor (props) {
+        super(props);
+        bindAll(this, [
+            'handleTabSelect'
+        ]);
+        this.state = {tabIndex: 0};
+    }
     componentDidMount () {
         this.props.vm.loadProject(this.props.projectData);
         this.props.vm.setCompatibilityMode(true);
@@ -19,6 +28,9 @@ class GUI extends React.Component {
     componentWillUnmount () {
         this.props.vm.stopAll();
     }
+    handleTabSelect (tabIndex) {
+        this.setState({tabIndex});
+    }
     render () {
         const {
             projectData, // eslint-disable-line no-unused-vars
@@ -27,7 +39,9 @@ class GUI extends React.Component {
         } = this.props;
         return (
             <GUIComponent
+                tabIndex={this.state.tabIndex}
                 vm={vm}
+                onTabSelect={this.handleTabSelect}
                 {...componentProps}
             />
         );
@@ -36,10 +50,10 @@ class GUI extends React.Component {
 
 GUI.propTypes = {
     ...GUIComponent.propTypes,
-    projectData: React.PropTypes.string,
-    vm: React.PropTypes.instanceOf(VM)
+    projectData: PropTypes.string,
+    vm: PropTypes.instanceOf(VM)
 };
 
 GUI.defaultProps = GUIComponent.defaultProps;
 
-module.exports = vmListenerHOC(GUI);
+export default vmListenerHOC(GUI);
