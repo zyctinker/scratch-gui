@@ -2,12 +2,12 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import Box from '../box/box.jsx';
-import serialports from '../../detectSerialport.js';
 import styles from './serialport-selector.css';
 
 const SerialportSelector = ({
-    currentSerialport,
     onChange,
+    currentPort,
+    portList,
     ...props
 }) => (
     <Box {...props}>
@@ -15,16 +15,16 @@ const SerialportSelector = ({
         <div className={styles.group}>
             <select
                 className={styles.serialportSelect}
-                value={currentSerialport}
+                value={currentPort}
                 onChange={onChange}
             >
-                {serialports.map(singleSerialport => (
+                {console.log('---rendering----')}
+                {portList.map(singleSerialport => (
                     <option
                         key={singleSerialport.comName}
                         value={singleSerialport.comName}
                     >
                         {singleSerialport.comName}
-                        {console.log(singleSerialport)}
                     </option>
 
                 ))}
@@ -35,8 +35,9 @@ const SerialportSelector = ({
 
 
 SerialportSelector.propTypes = {
-    currentSerialport: PropTypes.object,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    currentPort: PropTypes.string,
+    portList: PropTypes.array
 };
 
 export default SerialportSelector;

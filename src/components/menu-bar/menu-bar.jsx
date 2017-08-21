@@ -5,6 +5,7 @@ import Box from '../box/box.jsx';
 import LoadButton from '../../containers/load-button.jsx';
 import SaveButton from '../../containers/save-button.jsx';
 import LanguageSelector from '../../containers/language-selector.jsx';
+import SerialportSelector from '../../containers/serialport-selector.jsx';
 
 import styles from './menu-bar.css';
 import scratchLogo from './scratch-logo.svg';
@@ -25,6 +26,7 @@ const MenuBar = function MenuBar () {
             <SaveButton className={styles.menuItem} />
             <LoadButton className={styles.menuItem} />
             <LanguageSelector className={styles.menuItem} />
+            <SerialportSelector className={styles.menuItem} />
         </Box>
     );
 };

@@ -10,6 +10,8 @@ import log from './lib/log';
 import ProjectLoader from './lib/project-loader';
 import reducer from './reducers/gui';
 
+import getPortList from './detactSerialport';
+import {updatePortList} from './reducers/serialport';
 import styles from './index.css';
 
 class App extends React.Component {
@@ -25,9 +27,13 @@ class App extends React.Component {
     componentDidMount () {
         window.addEventListener('hashchange', this.updateProject);
         this.updateProject();
+        window.TimerId = setInterval(wrappersetInterval, 100);//定时器的id
+        console.log(window.TimerId);
     }
     componentWillUnmount () {
         window.removeEventListener('hashchange', this.updateProject);
+        clearInterval(window.TimerId);
+        console.log('cleared!');
     }
     fetchProjectId () {
         return window.location.hash.substring(1);
@@ -69,6 +75,22 @@ const enhancer = composeEnhancers(
     )
 );
 const store = createStore(reducer, intlInitialState, enhancer);
+
+var portList;
+//包裹放在setInterval中的函数
+const wrappersetInterval = function ()
+{
+    console.log('wrapper begins!');
+    getPortList().then(
+    portlist => {
+        portList = portlist.slice();
+        store.dispatch(updatePortList(portlist));
+        console.log('dispatched!');
+    },
+    err => {
+        portList = [];
+    });
+}
 
 ReactDOM.render((
     <Provider store={store}>
