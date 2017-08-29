@@ -11,7 +11,8 @@ import ProjectLoader from './lib/project-loader';
 import reducer from './reducers/gui';
 
 import getPortList from './detactSerialport';
-import {updatePortList} from './reducers/serialport';
+import {connect, disconnect} from './detactSerialport';
+import {updatePortList,updateCurrentPort} from './reducers/serialport';
 import styles from './index.css';
 
 class App extends React.Component {
@@ -27,8 +28,9 @@ class App extends React.Component {
     componentDidMount () {
         window.addEventListener('hashchange', this.updateProject);
         this.updateProject();
-        window.TimerId = setInterval(wrappersetInterval, 100);//定时器的id
-        console.log(window.TimerId);
+        window.TimerId = setInterval(wrappersetInterval, 400);//刷新串口的定时器的id
+        setTimeout(wrappersetTimeout,2000);//挂载第一个串口
+        window.pinValue = new Array();//储存管脚值
     }
     componentWillUnmount () {
         window.removeEventListener('hashchange', this.updateProject);
@@ -80,16 +82,24 @@ var portList;
 //包裹放在setInterval中的函数
 const wrappersetInterval = function ()
 {
-    console.log('wrapper begins!');
     getPortList().then(
     portlist => {
         portList = portlist.slice();
         store.dispatch(updatePortList(portlist));
-        console.log('dispatched!');
     },
     err => {
         portList = [];
     });
+}
+const wrappersetTimeout = function (){
+    store.dispatch(updateCurrentPort(store.getState().serialport.portList[0].comName));
+    var currentPort = store.getState().serialport.currentPort;
+    if(typeof(currentPort)!=='undefined' && currentPort !== 'err') {
+        connect(currentPort);
+    }
+    else{
+        console.log('no current serial port!');
+    }
 }
 
 ReactDOM.render((

@@ -1,7 +1,13 @@
-import getPortList from '../detactSerialport.js';
+import {connect, disconnect} from '../detactSerialport';
+import getPortList from '../detactSerialport';
 
 let portList = new Array();
+
 const updateCurrentPort = newCurrentPort => {
+    if (typeof (window.serialPort) !== 'undefined'){
+        disconnect();
+    }
+    connect(newCurrentPort);
     var action = {
         type: 'UPDATE_CURRENTPORT',
         currentPort: newCurrentPort
@@ -22,9 +28,9 @@ const serialportInitialState = {
     portList: portList
 };
 const reducer = function (state, action) {
-    if (typeof state === 'undefined') state = serialportInitialState;
-    console.log('----action----');
-    console.log(action);
+    if (typeof state === 'undefined'){//初始化串口
+        state = serialportInitialState;
+    }
     switch (action.type) {
     case 'UPDATE_PORTLIST':
         return Object.assign({}, state, {portList: action.portList});
